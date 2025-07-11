@@ -1,30 +1,35 @@
 import CommentNode from "./CommentNode";
 import { useState } from "react";
 
+let ids = 1;
+function getId() {
+  return ids++;
+}
+
 const iniComments = [
   {
-    id: 0,
+    id: getId(),
     commenter: "Dr. Strange",
     text: "Here we go!",
     children: [
       {
-        id: 1,
+        id: getId(),
         commenter: "Ironman",
         text: "Jervis, Bring up everything!",
         children: [
           {
-            id: 2,
+            id: getId(),
             commenter: "Cap",
             text: "On your left!",
             children: [],
           },
           {
-            id: 3,
+            id: getId(),
             commenter: "Thor",
             text: "Bring me Thanos!",
             children: [
               {
-                id: 4,
+                id: getId(),
                 commenter: "Daredevil",
                 text: "FISK!!!",
                 children: [],
@@ -34,29 +39,29 @@ const iniComments = [
         ],
       },
       {
-        id: 5,
+        id: getId(),
         commenter: "Spiderman",
         text: "Hats off cap!",
         children: [],
       },
       {
-        id: 6,
+        id: getId(),
         commenter: "Batman",
         text: "I'm vengence!",
         children: [
           {
-            id: 7,
+            id: getId(),
             commenter: "Joker",
             text: "Why so serious!",
             children: [],
           },
           {
-            id: 8,
+            id: getId(),
             commenter: "Homlender",
             text: "I am Homlender!",
             children: [
               {
-                id: 9,
+                id: getId(),
                 commenter: "Loki",
                 text: "For all of you!",
                 children: [],
@@ -66,12 +71,12 @@ const iniComments = [
         ],
       },
       {
-        id: 10,
+        id: getId(),
         commenter: "Ben 10",
         text: "It's hero time!",
         children: [
           {
-            id: 11,
+            id: getId(),
             commenter: "Flash",
             text: "I'm the fastest man alive!",
             children: [],
@@ -96,6 +101,28 @@ function CommentTree() {
     let updateComments = deleteById(comments, id);
     setComments(updateComments);
   }
+  function replyTextById(id, reply, comments) {
+    return comments.map((comment) => {
+      if (comment.id == id) {
+        return { ...comment, children: [...comment.children, reply] };
+      } else {
+        return {
+          ...comment,
+          children: replyTextById(id, reply, comment.children),
+        };
+      }
+    });
+  }
+  function handleSend(id, replyText) {
+    let reply = {
+      id: getId(),
+      commenter: "You",
+      text: replyText,
+      children: [],
+    };
+    let updateComments = replyTextById(id, reply, comments);
+    setComments(updateComments);
+  }
   return (
     <>
       {comments.map((comment) => (
@@ -103,6 +130,7 @@ function CommentTree() {
           key={comment.id}
           comment={comment}
           onDelete={handleDelete}
+          onSend={handleSend}
         />
       ))}
     </>
