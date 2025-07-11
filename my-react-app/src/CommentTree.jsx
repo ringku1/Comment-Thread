@@ -1,5 +1,5 @@
 import CommentNode from "./CommentNode";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 let ids = 1;
 function getId() {
@@ -124,7 +124,17 @@ const iniComments = [
 ];
 
 function CommentTree() {
-  let [comments, setComments] = useState(iniComments);
+  const [comments, setComments] = useState(() => {
+    const stored = localStorage.getItem("comments");
+    return stored && stored !== "[]"
+      ? JSON.parse(stored, (key, value) =>
+          key === "timestamp" ? new Date(value) : value
+        )
+      : iniComments;
+  });
+  useEffect(() => {
+    localStorage.setItem("comments", JSON.stringify(comments));
+  }, [comments]);
   function deleteById(comments, id) {
     return comments
       .filter((node) => node.id !== id)
