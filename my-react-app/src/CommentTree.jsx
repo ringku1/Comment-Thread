@@ -12,24 +12,24 @@ const iniComments = [
     commenter: "Dr. Strange",
     avatar: "https://i.pravatar.cc/40?u=a",
     text: "Here we go!",
-    timestamp: new Date("2025-07-10T12:56:11"),
-
+    timestamp: new Date("2025-07-01T12:56:11"),
+    likeCount: 0,
     children: [
       {
         id: getId(),
         commenter: "Ironman",
         avatar: "https://i.pravatar.cc/40?u=b",
         text: "Jervis, Bring up everything!",
-        timestamp: new Date("2025-07-09T10:20:40"),
-
+        timestamp: new Date("2025-07-05T10:20:40"),
+        likeCount: 0,
         children: [
           {
             id: getId(),
             commenter: "Cap",
             avatar: "https://i.pravatar.cc/40?u=c",
             text: "On your left!",
-            timestamp: new Date("2025-07-11T11:00:00"),
-
+            timestamp: new Date("2025-07-09T11:00:00"),
+            likeCount: 0,
             children: [],
           },
           {
@@ -37,16 +37,16 @@ const iniComments = [
             commenter: "Thor",
             avatar: "https://i.pravatar.cc/40?u=d",
             text: "Bring me Thanos!",
-            timestamp: new Date("2025-07-10T10:04:00"),
-
+            timestamp: new Date("2025-07-08T10:04:00"),
+            likeCount: 0,
             children: [
               {
                 id: getId(),
                 commenter: "Daredevil",
                 avatar: "https://i.pravatar.cc/40?u=e",
                 text: "FISK!!!",
-                timestamp: new Date("2025-07-01T10:00:00"),
-
+                timestamp: new Date("2025-07-10T10:00:00"),
+                likeCount: 0,
                 children: [],
               },
             ],
@@ -58,25 +58,25 @@ const iniComments = [
         commenter: "Spiderman",
         avatar: "https://i.pravatar.cc/40?u=f",
         text: "Hats off cap!",
-        timestamp: new Date("2025-07-11T02:00:00"),
-
+        timestamp: new Date("2025-07-04T02:00:00"),
+        likeCount: 0,
         children: [],
       },
       {
         id: getId(),
         commenter: "Batman",
         avatar: "https://i.pravatar.cc/40?u=g",
-        text: "I'm vengence!",
-        timestamp: new Date("2025-07-06T09:08:00"),
-
+        text: "I am Vengeance",
+        timestamp: new Date("2025-07-03T09:08:00"),
+        likeCount: 0,
         children: [
           {
             id: getId(),
             commenter: "Joker",
             avatar: "https://i.pravatar.cc/40?u=h",
             text: "Why so serious!",
-            timestamp: new Date("2025-07-01T07:16:25"),
-
+            timestamp: new Date("2025-07-07T07:16:25"),
+            likeCount: 0,
             children: [],
           },
           {
@@ -84,16 +84,16 @@ const iniComments = [
             commenter: "Homlender",
             avatar: "https://i.pravatar.cc/40?u=i",
             text: "I am Homlender! I can do the F I want!",
-            timestamp: new Date("2025-07-10T01:01:01"),
-
+            timestamp: new Date("2025-07-06T01:01:01"),
+            likeCount: 0,
             children: [
               {
                 id: getId(),
                 commenter: "Loki",
                 avatar: "https://i.pravatar.cc/40?u=j",
                 text: "For all of you!",
-                timestamp: new Date("2025-07-02T11:03:00"),
-
+                timestamp: new Date("2025-07-08T11:03:00"),
+                likeCount: 0,
                 children: [],
               },
             ],
@@ -105,16 +105,16 @@ const iniComments = [
         commenter: "Ben 10",
         avatar: "https://i.pravatar.cc/40?u=k",
         text: "It's hero time!",
-        timestamp: new Date("2025-07-03T04:50:10"),
-
+        timestamp: new Date("2025-07-02T04:50:10"),
+        likeCount: 0,
         children: [
           {
             id: getId(),
             commenter: "Flash",
             avatar: "https://i.pravatar.cc/40?u=l",
             text: "I'm the fastest man alive!",
-            timestamp: new Date("2025-06-05T06:40:20"),
-
+            timestamp: new Date("2025-07-06T06:40:20"),
+            likeCount: 0,
             children: [],
           },
         ],
@@ -150,7 +150,7 @@ function CommentTree() {
   function replyTextById(id, reply, comments) {
     return comments.map((comment) => {
       if (comment.id == id) {
-        return { ...comment, children: [...comment.children, reply] };
+        return { ...comment, children: [reply, ...comment.children] };
       } else {
         return {
           ...comment,
@@ -166,9 +166,26 @@ function CommentTree() {
       avatar: "https://i.pravatar.cc/40?u=u",
       text: replyText,
       timestamp: new Date(),
+      likeCount: 0,
       children: [],
     };
     let updateComments = replyTextById(id, reply, comments);
+    setComments(updateComments);
+  }
+  function likeById(comments, id) {
+    return comments.map((comment) => {
+      if (comment.id == id) {
+        return { ...comment, likeCount: comment.likeCount + 1 };
+      } else {
+        return {
+          ...comment,
+          likeCount: likeById(comment.children, id),
+        };
+      }
+    });
+  }
+  function handleLike(id) {
+    let updateComments = likeById(comments, id);
     setComments(updateComments);
   }
   return (
@@ -179,6 +196,7 @@ function CommentTree() {
           comment={comment}
           onDelete={handleDelete}
           onSend={handleSend}
+          onLike={handleLike}
         />
       ))}
     </>

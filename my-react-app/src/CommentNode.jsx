@@ -3,15 +3,22 @@ import reply from "./assets/reply.png";
 import bin from "./assets/bin.png";
 import cancel from "./assets/cancel.png";
 import send from "./assets/send-symbol.png";
+import like from "./assets/like.png";
+import likeI from "./assets/liked.png";
 
-function CommentNode({ comment, onDelete, onSend }) {
+function CommentNode({ comment, onDelete, onSend, onLike }) {
   let [showHideRep, setShowHide] = useState(false);
   let [replyButt, setReplyButt] = useState(false);
   let [replyText, setReplyText] = useState("");
+  let [liked, setLiked] = useState(false);
   let ref = useRef();
   useEffect(() => {
     if (replyButt) ref.current.focus();
   }, [replyButt]);
+  function handleLikes() {
+    setLiked(!liked);
+    onLike(comment.id);
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -67,9 +74,66 @@ function CommentNode({ comment, onDelete, onSend }) {
             • {formatTimeAgo(comment.timestamp)}
           </span>
         </div>
-        <p style={{ margin: "4px 0", color: "#444" }}>{comment.text}</p>
+        <div
+          style={{
+            width: "200px",
+            wordBreak: "break-word",
+          }}
+        >
+          <p style={{ margin: "4px 0", color: "#444" }}>{comment.text}</p>
+          <hr />
+        </div>
+      </div>
+      <div
+        style={{
+          width: "200px",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        {
+          <h5 style={{ margin: 0 }}>
+            {" "}
+            {comment.likeCount > 0
+              ? `${comment.likeCount} ${
+                  comment.likeCount === 1 ? "like" : "likes"
+                }`
+              : " "}
+          </h5>
+        }
+        {comment.children.length > 0 && (
+          <h5 style={{ margin: 0 }}>
+            {comment.children.length}{" "}
+            {comment.children.length === 1 ? "reply" : "replies"}
+          </h5>
+        )}
       </div>
       <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        <button
+          title={liked ? "Unlike" : "Like"}
+          onClick={handleLikes}
+          style={{
+            marginTop: "6px",
+            marginBottom: "8px",
+            padding: "4px 10px",
+            fontSize: "14px",
+            borderRadius: "4px",
+            border: "1px solid #888",
+            backgroundColor: "#fff",
+            cursor: "pointer",
+            height: 26.8,
+          }}
+        >
+          <img
+            src={liked ? likeI : like}
+            alt="Like"
+            style={{
+              width: "15px",
+              height: "15px",
+              verticalAlign: "middle",
+            }}
+          />
+        </button>
         <button
           title={replyButt ? "Cancel" : "Add Reply"}
           onClick={() => setReplyButt(!replyButt)}
@@ -142,12 +206,6 @@ function CommentNode({ comment, onDelete, onSend }) {
             {showHideRep ? "▴" : "▾"}
           </button>
         )}
-        {comment.children.length > 0 && (
-          <h5 style={{ margin: 0 }}>
-            {comment.children.length}{" "}
-            {comment.children.length === 1 ? "reply" : "replies"}
-          </h5>
-        )}
       </div>
       {replyButt ? (
         <form onSubmit={handleSubmit}>
@@ -193,6 +251,7 @@ function CommentNode({ comment, onDelete, onSend }) {
             comment={child}
             onDelete={onDelete}
             onSend={onSend}
+            onLike={onLike}
           />
         ))}
     </div>
