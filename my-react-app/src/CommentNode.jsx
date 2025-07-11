@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import reply from "./assets/reply.png";
 import bin from "./assets/bin.png";
 import cancel from "./assets/cancel.png";
@@ -8,6 +8,10 @@ function CommentNode({ comment, onDelete, onSend }) {
   let [showHideRep, setShowHide] = useState(false);
   let [replyButt, setReplyButt] = useState(false);
   let [replyText, setReplyText] = useState("");
+  let ref = useRef();
+  useEffect(() => {
+    if (replyButt) ref.current.focus();
+  }, [replyButt]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -16,6 +20,19 @@ function CommentNode({ comment, onDelete, onSend }) {
     setReplyText("");
     setReplyButt(false);
     setShowHide(true);
+  }
+
+  function formatTimeAgo(date) {
+    const now = new Date();
+    const seconds = Math.floor((now - new Date(date)) / 1000);
+
+    if (seconds < 60) return "just now";
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+    const days = Math.floor(hours / 24);
+    return `${days} day${days !== 1 ? "s" : ""} ago`;
   }
 
   return (
@@ -32,9 +49,24 @@ function CommentNode({ comment, onDelete, onSend }) {
       }}
     >
       <div style={{ marginBottom: "6px" }}>
-        <span style={{ fontWeight: "bold", color: "#333" }}>
-          {comment.commenter}
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <img
+            src={comment.avatar}
+            alt={comment.commenter}
+            style={{
+              width: "20px",
+              height: "20px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+          <span style={{ fontWeight: "bold", color: "#333" }}>
+            {comment.commenter}
+          </span>
+          <span style={{ fontSize: "12px", color: "#666" }}>
+            • {formatTimeAgo(comment.timestamp)}
+          </span>
+        </div>
         <p style={{ margin: "4px 0", color: "#444" }}>{comment.text}</p>
       </div>
       <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
@@ -120,6 +152,7 @@ function CommentNode({ comment, onDelete, onSend }) {
       {replyButt ? (
         <form onSubmit={handleSubmit}>
           <input
+            ref={ref}
             style={{ height: 25, marginRight: 6 }}
             type="text"
             value={replyText}
