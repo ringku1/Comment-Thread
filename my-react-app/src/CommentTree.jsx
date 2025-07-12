@@ -9,8 +9,8 @@ function getId() {
 const iniComments = [
   {
     id: getId(),
-    commenter: "Dr. Strange",
-    avatar: "https://i.pravatar.cc/40?u=a",
+    commenter: "You",
+    avatar: "https://i.pravatar.cc/40?u=u",
     text: "Here we go!",
     timestamp: new Date("2025-07-01T12:56:11"),
     likeCount: 0,
@@ -172,20 +172,20 @@ function CommentTree() {
     let updateComments = replyTextById(id, reply, comments);
     setComments(updateComments);
   }
-  function likeById(comments, id) {
+  function likeById(comments, id, likeNum) {
     return comments.map((comment) => {
       if (comment.id == id) {
-        return { ...comment, likeCount: comment.likeCount + 1 };
+        return { ...comment, likeCount: likeNum };
       } else {
         return {
           ...comment,
-          likeCount: likeById(comment.children, id),
+          children: likeById(comment.children, id, likeNum),
         };
       }
     });
   }
-  function handleLike(id) {
-    let updateComments = likeById(comments, id);
+  function handleLike(id, likeNum) {
+    let updateComments = likeById(comments, id, likeNum);
     setComments(updateComments);
   }
   return (

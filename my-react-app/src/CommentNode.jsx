@@ -10,14 +10,14 @@ function CommentNode({ comment, onDelete, onSend, onLike }) {
   let [showHideRep, setShowHide] = useState(false);
   let [replyButt, setReplyButt] = useState(false);
   let [replyText, setReplyText] = useState("");
-  let [liked, setLiked] = useState(false);
+  let [liked, setLiked] = useState(comment.likeCount);
   let ref = useRef();
   useEffect(() => {
     if (replyButt) ref.current.focus();
   }, [replyButt]);
   function handleLikes() {
     setLiked(!liked);
-    onLike(comment.id);
+    onLike(comment.id,liked?0:1);
   }
 
   function handleSubmit(e) {
