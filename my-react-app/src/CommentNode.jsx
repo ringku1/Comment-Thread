@@ -116,7 +116,7 @@ function CommentNode({ comment, onDelete, onSend, onLike }) {
         }}
       >
         <button
-          title={liked ? "Unlike" : "Like"}
+          title={liked ? "Dislike" : "Like"}
           onClick={handleLikes}
           style={{
             marginTop: "6px",
