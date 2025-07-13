@@ -108,9 +108,15 @@ function CommentNode({ comment, onDelete, onSend, onLike }) {
           </h5>
         )}
       </div>
-      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "18px",
+          alignItems: "center",
+        }}
+      >
         <button
-          title={liked ? "Unlike" : "Like"}
+          title={liked ? "Dislike" : "Like"}
           onClick={handleLikes}
           style={{
             marginTop: "6px",
