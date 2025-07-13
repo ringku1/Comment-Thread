@@ -17,7 +17,7 @@ function CommentNode({ comment, onDelete, onSend, onLike }) {
   }, [replyButt]);
   function handleLikes() {
     setLiked(!liked);
-    onLike(comment.id,liked?0:1);
+    onLike(comment.id, liked ? 0 : 1);
   }
 
   function handleSubmit(e) {
