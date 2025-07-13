@@ -17,7 +17,7 @@ function CommentNode({ comment, onDelete, onSend, onLike }) {
   }, [replyButt]);
   function handleLikes() {
     setLiked(!liked);
-    onLike(comment.id,liked?0:1);
+    onLike(comment.id, liked ? 0 : 1);
   }
 
   function handleSubmit(e) {
@@ -108,7 +108,13 @@ function CommentNode({ comment, onDelete, onSend, onLike }) {
           </h5>
         )}
       </div>
-      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "18px",
+          alignItems: "center",
+        }}
+      >
         <button
           title={liked ? "Unlike" : "Like"}
           onClick={handleLikes}
